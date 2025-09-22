@@ -19,19 +19,12 @@ app.use('/api/mentee', require('./routes/mentee'));
 app.use('/api/mentor', require('./routes/mentor'));
 app.use('/api/admin', require('./routes/admin'));
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static('client/build'));
-
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-  );
-}
+// --- SECTION REMOVED ---
+// The code that was here for serving static assets in production has been removed
+// as your frontend is a separate project.
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 const PORT = process.env.PORT || 5000;
 
