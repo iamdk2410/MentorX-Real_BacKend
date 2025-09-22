@@ -2,40 +2,21 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const authController = require('../controllers/authController');
-// Correctly destructure to get the specific 'auth' middleware function
 const { auth } = require('../middleware/auth');
 
-// @route   GET api/auth
-// @desc    Get logged in user
-// @access  Private
-// This route now receives the correct 'auth' function and will work as expected
+// --- (Existing routes remain the same) ---
 router.get('/', auth, authController.getLoggedInUser);
+router.post( '/register', [ check('name', 'Name is required').not().isEmpty(), check('email', 'Please include a valid email').isEmail(), check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }), check('role', 'Role is required').isIn(['mentee', 'mentor', 'admin']) ], authController.register );
+router.post( '/login', [ check('email', 'Please include a valid email').isEmail(), check('password', 'Password is required').exists(), check('role', 'Role is required').not().isEmpty() ], authController.login );
 
-// @route   POST api/auth/register
-// @desc    Register a user
-// @access  Public
-router.post(
-    '/register',
+// --- NEW ROUTE for Changing Password ---
+router.put(
+    '/change-password',
     [
-        check('name', 'Name is required').not().isEmpty(),
-        check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
-        check('role', 'Role is required').isIn(['mentee', 'mentor', 'admin'])
+        auth, // Protect the route
+        check('newPassword', 'New password must be at least 8 characters long').isLength({ min: 8 })
     ],
-    authController.register
-);
-
-// @route   POST api/auth/login
-// @desc    Auth user & get token
-// @access  Public
-router.post(
-    '/login',
-    [
-        check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Password is required').exists(),
-        check('role', 'Role is required').not().isEmpty()
-    ],
-    authController.login
+    authController.changePassword
 );
 
 module.exports = router;
