@@ -9,8 +9,16 @@ const app = express();
 // Connect Database
 connectDB();
 
+// --- CORRECTED CORS CONFIGURATION ---
+// This tells your backend to accept requests specifically from your live frontend.
+const corsOptions = {
+  origin: 'https://mentorx-app-759e.onrender.com', // Your live frontend URL
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+app.use(cors(corsOptions));
+// --- END OF CORRECTION ---
+
 // Init Middleware
-app.use(cors());
 app.use(express.json({ extended: false }));
 
 // Define Routes
@@ -18,10 +26,6 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/mentee', require('./routes/mentee'));
 app.use('/api/mentor', require('./routes/mentor'));
 app.use('/api/admin', require('./routes/admin'));
-
-// --- SECTION REMOVED ---
-// The code that was here for serving static assets in production has been removed
-// as your frontend is a separate project.
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
